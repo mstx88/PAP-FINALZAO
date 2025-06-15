@@ -1,0 +1,674 @@
+
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base target="_self">
+        <title>Banco Anjos</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@preline/preline@2.0.0/dist/preline.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+            
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: #0a0a0a;
+                color: #f5d76e;
+                min-height: 100vh;
+                margin: 0;
+            }
+
+            .card {
+                background: rgba(30, 30, 30, 0.95);
+                backdrop-filter: blur(12px);
+                border-radius: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            .transaction-item {
+                transition: all 0.3s ease;
+            }
+
+            .transaction-item:hover {
+                background: rgba(245, 215, 110, 0.1);
+            }
+
+            .btn-gold {
+                background-color: #f5d76e;
+                color: #0a0a0a;
+            }
+
+            .btn-gold:hover {
+                background-color: #e6c860;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app" class="flex flex-col min-h-screen">
+            <!-- Login Screen -->
+            <div id="login-screen" class="flex flex-col items-center justify-center min-h-screen">
+                <div class="card p-8 w-full max-w-md">
+                    <div class="flex items-center justify-center mb-8">
+                        <i class="fas fa-coins text-4xl text-yellow-400 mr-3"></i>
+                        <h1 class="text-3xl font-bold">Banco Anjos</h1>
+                    </div>
+                    
+                    <form id="login-form" class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-1">E-mail</label>
+                            <input type="email" id="email" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium mb-1">Senha</label>
+                            <input type="password" id="password" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-gold font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                            Entrar
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <p class="text-sm">Não tem conta? <button id="register-btn" class="text-yellow-400 hover:underline">Registre-se</button></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Screen -->
+            <div id="register-screen" class="hidden flex-col items-center justify-center min-h-screen">
+                <div class="card p-8 w-full max-w-md">
+                    <div class="flex items-center justify-center mb-8">
+                        <i class="fas fa-coins text-4xl text-yellow-400 mr-3"></i>
+                        <h1 class="text-3xl font-bold">Criar Conta</h1>
+                    </div>
+                    
+                    <form id="register-form" class="space-y-6">
+                        <div>
+                            <label for="reg-name" class="block text-sm font-medium mb-1">Nome Completo</label>
+                            <input type="text" id="reg-name" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <div>
+                            <label for="reg-email" class="block text-sm font-medium mb-1">E-mail</label>
+                            <input type="email" id="reg-email" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <div>
+                            <label for="reg-password" class="block text-sm font-medium mb-1">Senha</label>
+                            <input type="password" id="reg-password" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <div>
+                            <label for="reg-confirm-password" class="block text-sm font-medium mb-1">Confirmar Senha</label>
+                            <input type="password" id="reg-confirm-password" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-gold font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                            Criar Conta
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <p class="text-sm">Já tem conta? <button id="back-to-login" class="text-yellow-400 hover:underline">Voltar para login</button></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard" class="hidden flex flex-col min-h-screen">
+                <header class="bg-black text-yellow-300 py-4 px-6 shadow-lg">
+                    <div class="container mx-auto flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-coins text-2xl"></i>
+                            <h1 class="text-2xl font-bold">Banco Anjos</h1>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span id="user-name-display" class="font-medium"></span>
+                            <button id="logout-btn" class="btn-gold font-semibold py-1 px-3 rounded-lg hover:bg-yellow-600 transition text-sm">
+                                Sair
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex-grow container mx-auto px-4 py-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Balance Card -->
+                            <div class="card p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-bold">Saldo Atual</h2>
+                                    <button id="add-funds-btn" class="btn-gold font-semibold py-1 px-3 rounded-lg hover:bg-yellow-600 transition text-sm">
+                                        Adicionar Fundos
+                                    </button>
+                                </div>
+                                <div class="text-4xl font-bold mb-2" id="current-balance">R$ 0,00</div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Previsão final do mês: <span id="month-projection" class="font-medium">R$ 0,00</span></span>
+                                    <span>Gasto mensal: <span id="monthly-spending" class="font-medium">R$ 0,00</span></span>
+                                </div>
+                            </div>
+
+                            <!-- Spending Chart -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-bold mb-4">Gastos Mensais</h2>
+                                <div class="h-64">
+                                    <canvas id="spending-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-8">
+                            <!-- Add Transaction -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-bold mb-4">Adicionar Transação</h2>
+                                <form id="transaction-form" class="space-y-4">
+                                    <div>
+                                        <label for="transaction-type" class="block text-sm font-medium mb-1">Tipo</label>
+                                        <select id="transaction-type" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                            <option value="expense">Despesa</option>
+                                            <option value="income">Receita</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="transaction-amount" class="block text-sm font-medium mb-1">Valor (R$)</label>
+                                        <input type="number" id="transaction-amount" step="0.01" min="0" required 
+                                            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="transaction-description" class="block text-sm font-medium mb-1">Descrição</label>
+                                        <input type="text" id="transaction-description" required 
+                                            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="transaction-date" class="block text-sm font-medium mb-1">Data</label>
+                                        <input type="date" id="transaction-date" required 
+                                            class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full btn-gold font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                                        Adicionar Transação
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Recent Transactions -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-bold mb-4">Transações Recentes</h2>
+                                <div id="transactions-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                    <!-- Transactions will be added here dynamically -->
+                                    <p class="text-center text-gray-500 py-4">Nenhuma transação registrada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="bg-black text-yellow-300 py-6 px-4">
+                    <div class="container mx-auto text-center">
+                        <p>&copy; 2023 Banco Anjos. Todos os direitos reservados.</p>
+                    </div>
+                </footer>
+            </div>
+
+            <!-- Add Funds Modal -->
+            <div id="add-funds-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="card p-6 w-full max-w-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">Adicionar Fundos</h2>
+                        <button id="close-modal" class="text-gray-400 hover:text-yellow-400">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="add-funds-form" class="space-y-4">
+                        <div>
+                            <label for="funds-amount" class="block text-sm font-medium mb-1">Valor (R$)</label>
+                            <input type="number" id="funds-amount" step="0.01" min="0" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-gold font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition">
+                            Adicionar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Sample users data (in a real app, this would come from a database)
+            const users = [
+                {
+                    id: 1,
+                    name: "João Silva",
+                    email: "joao@exemplo.com",
+                    password: "senha123",
+                    balance: 5000.00,
+                    transactions: [
+                        { id: 1, type: "expense", amount: 120.50, description: "Supermercado", date: "2023-11-15" },
+                        { id: 2, type: "expense", amount: 45.00, description: "Cinema", date: "2023-11-10" },
+                        { id: 3, type: "income", amount: 3000.00, description: "Salário", date: "2023-11-05" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Maria Oliveira",
+                    email: "maria@exemplo.com",
+                    password: "senha123",
+                    balance: 3200.00,
+                    transactions: [
+                        { id: 1, type: "expense", amount: 250.00, description: "Aluguel", date: "2023-11-01" },
+                        { id: 2, type: "expense", amount: 80.00, description: "Restaurante", date: "2023-11-12" },
+                        { id: 3, type: "income", amount: 150.00, description: "Freelance", date: "2023-11-08" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "Felipe Gabriel",
+                    email: "felipe@exemplo.com",
+                    password: "senha123",
+                    balance: 1250.00,
+                    transactions: [
+                        { id: 1, type: "expense", amount: 180.00, description: "Combustível", date: "2023-11-14" },
+                        { id: 2, type: "expense", amount: 65.00, description: "Farmácia", date: "2023-11-09" },
+                        { id: 3, type: "income", amount: 500.00, description: "Venda de itens", date: "2023-11-03" }
+                    ]
+                }
+            ];
+
+            // DOM Elements
+            const loginScreen = document.getElementById('login-screen');
+            const registerScreen = document.getElementById('register-screen');
+            const dashboard = document.getElementById('dashboard');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const registerBtn = document.getElementById('register-btn');
+            const backToLogin = document.getElementById('back-to-login');
+            const logoutBtn = document.getElementById('logout-btn');
+            const userNameDisplay = document.getElementById('user-name-display');
+            const currentBalance = document.getElementById('current-balance');
+            const monthProjection = document.getElementById('month-projection');
+            const monthlySpending = document.getElementById('monthly-spending');
+            const transactionsList = document.getElementById('transactions-list');
+            const transactionForm = document.getElementById('transaction-form');
+            const addFundsBtn = document.getElementById('add-funds-btn');
+            const addFundsModal = document.getElementById('add-funds-modal');
+            const closeModal = document.getElementById('close-modal');
+            const addFundsForm = document.getElementById('add-funds-form');
+            const fundsAmount = document.getElementById('funds-amount');
+
+            // Chart variable
+            let spendingChart;
+
+            // Current user
+            let currentUser = null;
+
+            // Initialize the app
+            document.addEventListener('DOMContentLoaded', () => {
+                // Check if there's a logged in user in localStorage
+                const loggedInUserId = localStorage.getItem('loggedInUserId');
+                if (loggedInUserId) {
+                    const user = users.find(u => u.id === parseInt(loggedInUserId));
+                    if (user) {
+                        currentUser = user;
+                        showDashboard();
+                    }
+                }
+
+                // Event listeners
+                registerBtn.addEventListener('click', showRegisterScreen);
+                backToLogin.addEventListener('click', showLoginScreen);
+                logoutBtn.addEventListener('click', logout);
+                addFundsBtn.addEventListener('click', () => addFundsModal.classList.remove('hidden'));
+                closeModal.addEventListener('click', () => addFundsModal.classList.add('hidden'));
+
+                // Form submissions
+                loginForm.addEventListener('submit', handleLogin);
+                registerForm.addEventListener('submit', handleRegister);
+                transactionForm.addEventListener('submit', handleTransaction);
+                addFundsForm.addEventListener('submit', handleAddFunds);
+
+                // Prevent default anchor behavior
+                document.querySelectorAll('a').forEach(anchor => {
+                    anchor.addEventListener('click', e => e.preventDefault());
+                });
+            });
+
+            // Show login screen
+            function showLoginScreen() {
+                loginScreen.classList.remove('hidden');
+                registerScreen.classList.add('hidden');
+                dashboard.classList.add('hidden');
+            }
+
+            // Show register screen
+            function showRegisterScreen() {
+                loginScreen.classList.add('hidden');
+                registerScreen.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+
+            // Show dashboard
+            function showDashboard() {
+                loginScreen.classList.add('hidden');
+                registerScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+
+                // Update user info
+                userNameDisplay.textContent = currentUser.name;
+
+                // Update balance
+                updateBalance();
+
+                // Update transactions
+                updateTransactions();
+
+                // Update chart
+                updateChart();
+            }
+
+            // Handle login
+            function handleLogin(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('loggedInUserId', user.id);
+                    showDashboard();
+                } else {
+                    alert('E-mail ou senha incorretos');
+                }
+            }
+
+            // Handle register
+            function handleRegister(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const password = document.getElementById('reg-password').value;
+                const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+                if (password !== confirmPassword) {
+                    alert('As senhas não coincidem');
+                    return;
+                }
+
+                if (users.some(u => u.email === email)) {
+                    alert('Este e-mail já está em uso');
+                    return;
+                }
+
+                // Create new user
+                const newUser = {
+                    id: users.length + 1,
+                    name,
+                    email,
+                    password,
+                    balance: 0,
+                    transactions: []
+                };
+
+                users.push(newUser);
+                currentUser = newUser;
+                localStorage.setItem('loggedInUserId', newUser.id);
+                showDashboard();
+            }
+
+            // Handle logout
+            function logout() {
+                currentUser = null;
+                localStorage.removeItem('loggedInUserId');
+                showLoginScreen();
+            }
+
+            // Handle transaction
+            function handleTransaction(e) {
+                e.preventDefault();
+                
+                const type = document.getElementById('transaction-type').value;
+                const amount = parseFloat(document.getElementById('transaction-amount').value);
+                const description = document.getElementById('transaction-description').value;
+                const date = document.getElementById('transaction-date').value;
+
+                if (type === 'expense') {
+                    currentUser.balance -= amount;
+                } else {
+                    currentUser.balance += amount;
+                }
+
+                const newTransaction = {
+                    id: currentUser.transactions.length + 1,
+                    type,
+                    amount,
+                    description,
+                    date
+                };
+
+                currentUser.transactions.push(newTransaction);
+                
+                // Reset form
+                transactionForm.reset();
+                
+                // Update UI
+                updateBalance();
+                updateTransactions();
+                updateChart();
+            }
+
+            // Handle add funds
+            function handleAddFunds(e) {
+                e.preventDefault();
+                
+                const amount = parseFloat(fundsAmount.value);
+                
+                if (amount <= 0) {
+                    alert('O valor deve ser maior que zero');
+                    return;
+                }
+
+                currentUser.balance += amount;
+                
+                // Add as income transaction
+                const newTransaction = {
+                    id: currentUser.transactions.length + 1,
+                    type: 'income',
+                    amount,
+                    description: 'Depósito',
+                    date: new Date().toISOString().split('T')[0]
+                };
+
+                currentUser.transactions.push(newTransaction);
+                
+                // Reset and close
+                fundsAmount.value = '';
+                addFundsModal.classList.add('hidden');
+                
+                // Update UI
+                updateBalance();
+                updateTransactions();
+                updateChart();
+            }
+
+            // Update balance display
+            function updateBalance() {
+                currentBalance.textContent = `R$ ${currentUser.balance.toFixed(2)}`;
+                
+                // Calculate monthly spending and projection
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const today = now.getDate();
+                const daysRemaining = daysInMonth - today;
+                
+                // Get transactions from current month
+                const monthlyTransactions = currentUser.transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === currentMonth && 
+                        transactionDate.getFullYear() === currentYear;
+                });
+                
+                // Calculate total expenses
+                const totalExpenses = monthlyTransactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                
+                monthlySpending.textContent = `R$ ${totalExpenses.toFixed(2)}`;
+                
+                // Calculate projection
+                const avgDailySpending = totalExpenses / today;
+                const projectedSpending = avgDailySpending * daysInMonth;
+                const projectedBalance = currentUser.balance - (projectedSpending - totalExpenses);
+                
+                monthProjection.textContent = `R$ ${projectedBalance.toFixed(2)}`;
+            }
+
+            // Update transactions list
+            function updateTransactions() {
+                // Sort transactions by date (newest first)
+                const sortedTransactions = [...currentUser.transactions].sort((a, b) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+                // Clear current transactions
+                transactionsList.innerHTML = '';
+
+                if (sortedTransactions.length === 0) {
+                    transactionsList.innerHTML = '<p class="text-center text-gray-500 py-4">Nenhuma transação registrada</p>';
+                    return;
+                }
+
+                // Add transactions to the list
+                sortedTransactions.forEach(transaction => {
+                    const transactionItem = document.createElement('div');
+                    transactionItem.className = 'transaction-item p-3 rounded-lg border border-gray-700';
+                    
+                    const isExpense = transaction.type === 'expense';
+                    const amountClass = isExpense ? 'text-red-400' : 'text-green-400';
+                    const amountSign = isExpense ? '-' : '+';
+                    
+                    transactionItem.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium">${transaction.description}</div>
+                                <div class="text-sm text-gray-400">${formatDate(transaction.date)}</div>
+                            </div>
+                            <div class="${amountClass} font-semibold">${amountSign} R$ ${transaction.amount.toFixed(2)}</div>
+                        </div>
+                    `;
+                    
+                    transactionsList.appendChild(transactionItem);
+                });
+            }
+
+            // Update spending chart
+            function updateChart() {
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+                
+                // Get transactions from current month
+                const monthlyTransactions = currentUser.transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === currentMonth && 
+                        transactionDate.getFullYear() === currentYear;
+                });
+                
+                // Group expenses by day
+                const dailyExpenses = {};
+                monthlyTransactions
+                    .filter(t => t.type === 'expense')
+                    .forEach(t => {
+                        const date = new Date(t.date).getDate();
+                        dailyExpenses[date] = (dailyExpenses[date] || 0) + t.amount;
+                    });
+                
+                // Prepare chart data
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+                const data = labels.map(day => dailyExpenses[day] || 0);
+                
+                // Get or create chart canvas
+                const ctx = document.getElementById('spending-chart').getContext('2d');
+                
+                // Destroy previous chart if exists
+                if (spendingChart) {
+                    spendingChart.destroy();
+                }
+                
+                // Create new chart
+                spendingChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Gastos diários (R$)',
+                            data: data,
+                            backgroundColor: 'rgba(245, 215, 110, 0.7)',
+                            borderColor: 'rgba(245, 215, 110, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#f5d76e'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#f5d76e'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#f5d76e'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Helper function to format date
+            function formatDate(dateString) {
+                const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+                return new Date(dateString).toLocaleDateString('pt-BR', options);
+            }
+        </script>
+    </body>
+    </html>
